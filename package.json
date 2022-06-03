@@ -2,6 +2,9 @@
   "name": "Segunda-entrega-proyecto-final",
   "version": "1.0.0",
   "main": "index.js",
+  "engines": {
+    "node": "16.15.0"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js"
@@ -36,11 +39,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Damian-Abalos/segunda-entrega-backend.git"
+    "url": "git+https://github.com/Damian-Abalos/tercera-entrega-backend.git"
   },
   "bugs": {
-    "url": "https://github.com/Damian-Abalos/segunda-entrega-backend/issues"
+    "url": "https://github.com/Damian-Abalos/tercera-entrega-backend/issues"
   },
-  "homepage": "https://github.com/Damian-Abalos/segunda-entrega-backend#readme",
+  "homepage": "https://github.com/Damian-Abalos/tercera-entrega-backend#readme",
   "description": ""
 }
