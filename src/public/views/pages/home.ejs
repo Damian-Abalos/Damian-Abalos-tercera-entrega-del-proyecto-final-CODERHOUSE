@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body>
+    <div>
+      <%- include('../partials/header'); %>
+      <div class="row container">
+        <% for (const producto of productosCargados) { %>
+        <div class="p-3 col-lg-4 col-md-6 col-sm-12">
+          <div class="card">
+            <img src="<%=producto.foto %>" class="card-img-top" alt="..." />
+            <div class="card-body">
+              <h5 class="card-title"><%=producto.nombre %></h5>
+              <!-- <p class="card-text"><%=producto.descripcion %></p> -->
+              <p class="card-text">$<%=producto.precio %></p>
+              <a
+                href="#"
+                onClick="añadirAlCarrito(<%=producto.id %>)"
+                class="btn btn-primary"
+                >Añadir al carrito</a
+              >
+            </div>
+          </div>
+        </div>
+        <% }; %>
+      </div>
+    </div>
+    <script>
+      let idUser = "<%=usuario.userMail%>";
+      const añadirAlCarrito = async (id_prod) => {
+        await axios({
+          method: "POST",
+          url: `http://localhost:8080/api/carrito/${idUser}/productos`,
+          data: {
+            id_prod: id_prod,
+          },
+        }).then((res) => console.log(res)); // reemplazar x logger.info
+        alert(`producto agregado al carrito`);
+      };
+    </script>
+  </body>
+</html>

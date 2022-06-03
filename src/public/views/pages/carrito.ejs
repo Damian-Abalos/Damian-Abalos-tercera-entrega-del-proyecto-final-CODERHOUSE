@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body>
+    <div>
+      <%- include('../partials/header'); %>
+      <h2>Carrito de compras</h2>
+      <% if(cartProducts.length > 0){ %>
+      <div class="table-responsive">
+        <table class="table table-dark">
+          <tr class="warning">
+            <th>Nombre</th>
+            <th>Precio</th>
+            <th>Imagen</th>
+          </tr>
+          <% for (const producto of cartProducts) { %>
+          <tr>
+            <td><%=producto.nombre %></td>
+            <td><%=producto.precio %></td>
+            <td>
+              <img style="max-width: 50px" src="<%=producto.foto %>" alt="" />
+            </td>
+          </tr>
+          <% }; %>
+        </table>
+      </div>
+      <div class="d-flex justify-content-center">
+        <a href="/" class="btn btn-success m-2">Seguir comprando</a>
+        <form action="/carrito" method="post">
+          <button
+          id="myBtn"
+          type="submit"
+          class="btn btn-primary m-2"
+          >
+          Finalizar compra
+        </button>
+      </form>
+      </div>
+      <% } else { %>
+      <h3 class="alert alert-danger text-center">No hay productos</h3>
+      <% } %>
+    </div>
+    <script src="/js/main.js"></script>
+  </body>
+</html>

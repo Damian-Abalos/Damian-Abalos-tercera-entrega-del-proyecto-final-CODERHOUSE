@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <%- include('../partials/head'); %>
+  </head>
+  <body>
+    <%- include('../partials/header'); %>
+    <div>
+        <h2>Info usuario</h2>
+        <img src="<%=usuario.userPhoto %>" alt="">
+        <ul>
+            <li>NOMBRE: <%=usuario.userName %></li>
+            <li>EDAD: <%=usuario.userAge %></li>
+            <li>MAIL: <%=usuario.userMail %></li>
+            <li>DIRECCION: <%=usuario.userAdress %></li>
+            <li>TELEFONO: <%=usuario.userPhone %></li>
+        </ul>
+    </div>
+  </body>
+</html>

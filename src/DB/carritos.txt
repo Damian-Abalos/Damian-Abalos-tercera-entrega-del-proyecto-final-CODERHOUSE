@@ -1,0 +1,12 @@
+[
+  {
+    "id": 2,
+    "timestamp": "Sun Feb 27 2022 18:19:48 GMT-0300 (hora estándar de Argentina)",
+    "productos": []
+  },
+  {
+    "id": 3,
+    "timestamp": "Sun Feb 27 2022 18:19:49 GMT-0300 (hora estándar de Argentina)",
+    "productos": []
+  }
+]
