@@ -34,7 +34,7 @@ const options = {
 	}
 }
 const args = minimist(process.argv.slice(2), options)
-const port = parseInt(args.port) || 8080
+const PORT = parseInt(args.port) || 8080
 const modo = (args.modo).toUpperCase()
 const numCPUs = require('os').cpus().length
 
@@ -98,14 +98,14 @@ if (modo === 'CLUSTER') {
 			cluster.fork()
 		})
 	} else {
-		const connectedServer = httpServer.listen(port, function () {
+		const connectedServer = httpServer.listen(PORT || 8080, function () {
 			logger.info(`Servidor escuchando en el puerto ${connectedServer.address().port}, modo: ${modo} - PID: ${process.pid}`)
 		})
 		connectedServer.on('error', error => logger.error(`Error en servidor: ${error}`))
 	}
 } else {
 	//modo FORK por defecto
-	const connectedServer = httpServer.listen(port, function () {
+	const connectedServer = httpServer.listen(PORT || 8080, function () {
 		logger.info(`Servidor escuchando en el puerto ${connectedServer.address().port}, modo: ${modo} - PID: ${process.pid}`)
 	})
 	connectedServer.on('error', error => logger.error(`Error en servidor: ${error}`))
