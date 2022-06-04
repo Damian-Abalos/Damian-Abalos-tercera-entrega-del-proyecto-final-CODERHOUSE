@@ -300,20 +300,25 @@ rutaAutenticacion.post("/carrito", async (req, res) => {
     await carritos.updateById(emptyCart, usuarioMail);
   };
 
-  let productosCart = await carritos.getProductsById(userMail)
-  let cartProducts = productosCart[0]
+  let cartProducts = [{
+    nombre:"celular",
+    precio:"100",
+    foto:"asd"
+  }]
+  // let productosCart = await carritos.getProductsById(userMail)
+  // let cartProducts = productosCart[0]
   const finalizarCompra = async () => {
-    // let productosComprados = cartProducts.map(function (producto) {
-    //   return `
-    //   <ul>
-    //       <li>${producto.nombre}</li>             
-    //       <li>$${producto.precio}</li>             
-    //       <li><img style="max-width: 50px;" src="${producto.foto}" alt=""></li>             
-    //   </ul>`;
-    // });
+    let productosComprados = cartProducts.map(function (producto) {
+      return `
+      <ul>
+          <li>${producto.nombre}</li>             
+          <li>$${producto.precio}</li>             
+          <li><img style="max-width: 50px;" src="${producto.foto}" alt=""></li>             
+      </ul>`;
+    });
     enviarSms("+541133710828");
     enviarWhatsapp(usuarioNombre, "+5491133710828");
-    // enviarMail(usuarioNombre, productosComprados);
+    enviarMail(usuarioNombre, productosComprados);
     vaciarCarrito();
     res.redirect("/");
   };
