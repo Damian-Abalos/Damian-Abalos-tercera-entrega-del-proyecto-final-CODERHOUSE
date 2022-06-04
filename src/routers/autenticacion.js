@@ -271,11 +271,18 @@ rutaAutenticacion.get("/carrito", (req, res) => {
     userPhone,
     userPhoto,
   };
+  let productosCart
+  const getProdructs = async () => {
+    productosCart = await carritos.getProductsById(userMail)
+  }
+  const renderizar = () => {
+    res.render("pages/carrito", { usuario, productosCart })
+  }
+  const cargarYrenderizar = () =>{
+    getProdructs()
+    renderizar()
+  }
 
-
-    let productosCart = carritos.getProductsById(userMail).then(res.render("pages/carrito", { usuario, productosCart }))
-    // let cartProducts = productosCart[0];
-    // res.render("pages/carrito", { usuario, cartProducts })
 });
 
 rutaAutenticacion.post("/carrito", async (req, res) => {
