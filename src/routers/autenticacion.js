@@ -276,23 +276,26 @@ rutaAutenticacion.get("/carrito", (req, res) => {
     userPhone,
     userPhoto,
   };
-  let productosCart = []
-  const getCartProducts = async () => {
-    try {
-      let pedirCarrito = await axios.get(
-        // `http://localhost:8080/api/carrito/${userMail}/productos`
-        `https://tercera-entrega-coder.herokuapp.com/${userMail}/productos`
-      );
-      productosCart.push(pedirCarrito.data)      
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  getCartProducts();
-  setTimeout(function(){
-    let cartProducts = productosCart[0]
-      res.render("pages/carrito", {usuario, cartProducts})
-    },500)
+  let productosCart;
+  // const getCartProducts = async () => {
+  //   try {
+  //     let pedirCarrito = await axios.get(
+  //       // `http://localhost:8080/api/carrito/${userMail}/productos`
+  //       `https://tercera-entrega-coder.herokuapp.com/${userMail}/productos`
+  //     );
+  //     productosCart.push(pedirCarrito.data)      
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+  // getCartProducts();
+  // let productosCargados;
+  carritos.getProductsById(usuarioMail).then((resp) => (productosCart = resp))
+
+  // setTimeout(function(){
+  let cartProducts = productosCart[0]
+  res.render("pages/carrito", {usuario, cartProducts})
+    // },500)
 });
 
 rutaAutenticacion.post("/carrito", async (req,res)=>{
