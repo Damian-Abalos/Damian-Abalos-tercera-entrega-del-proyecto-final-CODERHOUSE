@@ -2,23 +2,22 @@ const express = require("express")
 const session = require("express-session")
 const { Server: HttpServer } = require("http");
 
-
-const path = require("path");
-const exphbs = require("express-handlebars")
+require("dotenv").config()
 const ejs = require('ejs')
+const path = require("path")
+const exphbs = require("express-handlebars")
 
-const logger = require('./src/loggers/logger')
 const cluster = require('cluster');
 const minimist = require('minimist');
+const passport = require('passport');
 const bodyParser = require('body-parser')
 const MongoStore = require('connect-mongo');
-const passport = require('passport');
+const logger = require('./src/loggers/logger')
 const { Strategy: LocalStrategy } = require('passport-local').Strategy;
 
-const rutaProductos = require("./src/routers/productos.js")
 const rutaCarrito = require("./src/routers/carrito.js")
+const rutaProductos = require("./src/routers/productos.js")
 const rutaAutenticacion = require("./src/routers/autenticacion")
-
 const app = express();
 const httpServer = new HttpServer(app);
 
@@ -34,7 +33,8 @@ const options = {
 	}
 }
 const args = minimist(process.argv.slice(2), options)
-const PORT = parseInt(args.port) || 8080
+// const PORT = parseInt(args.port) || 8080
+const PORT = process.env.PORT
 const modo = (args.modo).toUpperCase()
 const numCPUs = require('os').cpus().length
 
@@ -46,15 +46,11 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static("./src/public"))
 
 // Motor de plantillas 
-
 app.set("views", "./src/public/views");
 app.set("view engine", "ejs");
 
-
-
 //Session Setup
 app.use(bodyParser.urlencoded({ extended:true}));
-
 app.use(session({
 	store: MongoStore.create({
 		mongoUrl: process.env.URLDB
@@ -67,20 +63,15 @@ app.use(session({
 		maxAge: 600000
 	}
 }))
-
 app.use(passport.initialize());
 app.use(passport.session());
-
 app.use((req,res, next) => {
 	logger.info(`Ruta: ${req.path}, Método: ${req.method}`)
 	next()
 })
-
 app.use("/api/productos", rutaProductos);
 app.use("/api/carrito", rutaCarrito)
 app.use("/", rutaAutenticacion)
-
-
 
 //server
 if (modo === 'CLUSTER') {
@@ -98,14 +89,14 @@ if (modo === 'CLUSTER') {
 			cluster.fork()
 		})
 	} else {
-		const connectedServer = httpServer.listen(PORT || 8080, function () {
+		const connectedServer = httpServer.listen(PORT, function () {
 			logger.info(`Servidor escuchando en el puerto ${connectedServer.address().port}, modo: ${modo} - PID: ${process.pid}`)
 		})
 		connectedServer.on('error', error => logger.error(`Error en servidor: ${error}`))
 	}
 } else {
 	//modo FORK por defecto
-	const connectedServer = httpServer.listen(PORT || 8080, function () {
+	const connectedServer = httpServer.listen(PORT, function () {
 		logger.info(`Servidor escuchando en el puerto ${connectedServer.address().port}, modo: ${modo} - PID: ${process.pid}`)
 	})
 	connectedServer.on('error', error => logger.error(`Error en servidor: ${error}`))
