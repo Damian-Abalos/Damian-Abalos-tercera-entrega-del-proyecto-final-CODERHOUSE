@@ -271,7 +271,7 @@ rutaAutenticacion.get("/carrito", (req, res) => {
     userPhone,
     userPhoto,
   };
-  let productosCart = [
+  let cartProducts = [
     {
       nombre:"celular",
       precio:"100",
@@ -283,7 +283,7 @@ rutaAutenticacion.get("/carrito", (req, res) => {
   //   logger.info(productosCart)
   // }
   const renderizar = () => {
-    res.render("pages/carrito", { usuario, productosCart })
+    res.render("pages/carrito", { usuario, cartProducts })
   }
   renderizar()
 
