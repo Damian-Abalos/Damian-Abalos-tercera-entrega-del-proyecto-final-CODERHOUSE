@@ -271,11 +271,17 @@ rutaAutenticacion.get("/carrito", (req, res) => {
     userPhone,
     userPhoto,
   };
-  let productosCart
-  const getProdructs = async () => {
-    productosCart = await carritos.getProductsById(userMail)
-    logger.info(productosCart)
-  }
+  let productosCart = [
+    {
+      nombre:"celular",
+      precio:"100",
+      foto:"asd"
+    }
+  ]
+  // const getProdructs = async () => {
+  //   productosCart = await carritos.getProductsById(userMail)
+  //   logger.info(productosCart)
+  // }
   const renderizar = () => {
     res.render("pages/carrito", { usuario, productosCart })
   }
@@ -283,6 +289,7 @@ rutaAutenticacion.get("/carrito", (req, res) => {
     getProdructs()
     renderizar()
   }
+  cargarYrenderizar()
 
 });
 
