@@ -290,7 +290,7 @@ rutaAutenticacion.get("/carrito", (req, res) => {
   // };
   // getCartProducts();
   // let productosCargados;
-  carritos.getProductsById(usuarioMail).then((resp) => (productosCart = resp))
+  carritos.getProductsById(userMail).then((resp) => (productosCart = resp))
 
   // setTimeout(function(){
   let cartProducts = productosCart[0]
