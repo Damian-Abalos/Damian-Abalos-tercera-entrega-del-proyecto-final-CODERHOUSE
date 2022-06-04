@@ -7,7 +7,6 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const { model } = require("mongoose");
 const { Schema } = require("mongoose");
-// const logger = require('../../loggers/logger')
 const URLDB = process.env.URLDB;
 const rutaAutenticacion = Router();
 
@@ -29,9 +28,9 @@ const enviarSms = async (to) => {
       from: "+19379362607",
       to: to,
     });
-    console.log(message);
+    logger.info(message);
   } catch (error) {
-    console.log(error);
+    logger.info(error);
   }
 };
 const enviarWhatsapp = async (usuarioNombre, usuarioTelefono) => {
@@ -44,9 +43,9 @@ const enviarWhatsapp = async (usuarioNombre, usuarioTelefono) => {
       from: "whatsapp:+14155238886",
       to: `whatsapp:${usuarioTelefono}`,
     });
-    console.log(message);
+    logger.info(message);
   } catch (error) {
-    console.log(error);
+    logger.info(error);
   }
 }; 
 const enviarMail = async (usuarioNombre, productosComprados) => {  
@@ -68,9 +67,9 @@ const enviarMail = async (usuarioNombre, productosComprados) => {
   
   try {
       const info = await transporter.sendMail(mailOptions)
-      console.log(info)
+      logger.info(info)
   } catch (error) {
-      console.log(error)
+      logger.info(error)
   }
 } 
 /*------------- [Import carritos y productos]-------------*/
@@ -105,7 +104,7 @@ mongoose.connect(
   },
   (err) => {
     if (err) throw new Error(`Error de conexion a la base de datos ${err}`);
-    console.log("base de datos conectada");
+    logger.info("base de datos conectada");
   }
 );
 /*------------- [LocalStrategy - Login]-------------*/
@@ -116,12 +115,12 @@ passport.use(
       if (err) return done(err);
 
       if (!user) {
-        console.log("User Not Found with username " + username);
+        logger.info("User Not Found with username " + username);
         return done(null, false);
       }
 
       if (!isValidPassword(user, password)) {
-        console.log("Invalid Password");
+        logger.info("Invalid Password");
         return done(null, false);
       }
 
@@ -143,14 +142,14 @@ passport.use(
     },
     (req, username, password, done) => {
       User.findOne({ username: username }, function (err, user) {
-        console.log(user);
-        console.log(username);
+        logger.info(user);
+        logger.info(username);
         if (err) {
-          console.log("Error in SignUp: " + err);
+          logger.info("Error in SignUp: " + err);
           return done(err);
         }
         if (user) {
-          console.log("User already exists");
+          logger.info("User already exists");
           return done(null, false);
         }
         const newUser = {
@@ -173,11 +172,11 @@ passport.use(
 
         User.create(newUser, async (err, userWithId) => {
           if (err) {
-            console.log("Error in Saving user: " + err);
+            logger.info("Error in Saving user: " + err);
             return done(err);
           }
-          console.log(user);
-          console.log("User Registration succesful");
+          logger.info(user);
+          logger.info("User Registration succesful")
 
           
           const asunto = "nuevo registro";
@@ -210,8 +209,6 @@ passport.use(
             subject: asunto,
             html: mensajeHtml,
           };
-          // const info = transporter.sendMail(mailOptions);
-          // console.log(info);
           await transporter.sendMail(mailOptions);
           return done(null, userWithId);
         });
@@ -233,7 +230,6 @@ passport.deserializeUser((id, done) => {
 
 /*---------------- [Rutas] ---------------*/
 // Index
-
 rutaAutenticacion.get("/", (req, res) => {
   if (req.isAuthenticated()) {
     let user = req.user;
@@ -275,26 +271,16 @@ rutaAutenticacion.get("/carrito", (req, res) => {
     userAdress,
     userPhone,
     userPhoto,
-  };
-  // const getCartProducts = async () => {
-    //   try {
-  //     let pedirCarrito = await axios.get(
-  //       // `http://localhost:8080/api/carrito/${userMail}/productos`
-  //       `https://tercera-entrega-coder.herokuapp.com/${userMail}/productos`
-  //     );
-  //     productosCart.push(pedirCarrito.data)      
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-  // getCartProducts();
-  // let productosCargados;
+  }
+
   const getCartAndRender = async () => {
-    let productosCart = await carritos.getProductsById(userMail).then((resp) => (productosCart = resp[0]))
+    let productosCart = await carritos.getProductsById(userMail)
+    let cartProducts = productosCart[0]
     res.render("pages/carrito", {usuario, cartProducts})
   }
   getCartAndRender()
 });
+
 
 rutaAutenticacion.post("/carrito", async (req,res)=>{
   let user = req.user;
@@ -309,18 +295,23 @@ rutaAutenticacion.post("/carrito", async (req,res)=>{
     await carritos.updateById(emptyCart, usuarioMail)
   }
 
-  let productosCart
-  const getCartProducts = async () => {
-    try {
-      let pedirCarrito = await axios.get(
-        `http://localhost:8080/api/carrito/${usuarioMail}/productos`
-      );
-      productosCart = pedirCarrito.data      
-    } catch (error) {
-      console.error(error);
-    }
-  };
-  getCartProducts();
+  // let productosCart
+  // const getCartProducts = async () => {
+  //   try {
+  //     let pedirCarrito = await axios.get(
+  //       // `http://localhost:8080/api/carrito/${usuarioMail}/productos`
+  //       `https://tercera-entrega-coder.herokuapp.com//api/carrito/${usuarioMail}/productos`
+  //     );
+  //     productosCart = pedirCarrito.data      
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
+  // getCartProducts();
+  const getCartAndRender = async () => {
+    let productosCart = await carritos.getProductsById(userMail).then((resp) => (productosCart = resp[0]))
+    res.render("pages/carrito", {usuario, cartProducts})
+  }
 
   const finalizarCompra = async () => {
     let cartProducts = productosCart
@@ -332,7 +323,7 @@ rutaAutenticacion.post("/carrito", async (req,res)=>{
           <li><img style="max-width: 50px;" src="${producto.foto}" alt=""></li>             
       </ul>`;
   });
-    // console.log(productosCart)
+    // logger.info(productosCart)
     // let productos = JSON.stringify(cartProducts)
     enviarSms('+541133710828')
     enviarWhatsapp(usuarioNombre,'+5491133710828')
@@ -375,10 +366,10 @@ rutaAutenticacion.get("/infoUser", (req, res) => {
 rutaAutenticacion.get("/login", (req, res) => {
   if (req.isAuthenticated()) {
     let user = req.user;
-    console.log("user logueado");
+    logger.info("user logueado");
     res.render("pages/home", { user });
   } else {
-    console.log("user NO logueado");
+    logger.info("user NO logueado");
     res.render("pages/login.ejs");
   }
 });
@@ -390,7 +381,7 @@ rutaAutenticacion.post(
   })
 );
 rutaAutenticacion.get("/login-error", (req, res) => {
-  console.log("error en login");
+  logger.info("error en login");
   res.render("pages/login-error", {});
 });
 // signup
@@ -405,7 +396,7 @@ rutaAutenticacion.post(
   })
 );
 rutaAutenticacion.get("/signup-error", (req, res) => {
-  console.log("error en signup");
+  logger.info("error en signup");
   res.render("pages/signup-error", {});
 });
 // Logout
@@ -432,7 +423,7 @@ function checkAuthentication(req, res, next) {
 }
 rutaAutenticacion.get("/ruta-protegida", checkAuthentication, (req, res) => {
   let user = req.user;
-  console.log(user);
+  logger.info(user);
   res.send("<h1>Ruta OK!</h1>");
 });
 
