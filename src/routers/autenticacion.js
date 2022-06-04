@@ -280,7 +280,8 @@ rutaAutenticacion.get("/carrito", (req, res) => {
   const getCartProducts = async () => {
     try {
       let pedirCarrito = await axios.get(
-        `http://localhost:8080/api/carrito/${userMail}/productos`
+        // `http://localhost:8080/api/carrito/${userMail}/productos`
+        `https://tercera-entrega-coder.herokuapp.com/${userMail}/productos`
       );
       productosCart.push(pedirCarrito.data)      
     } catch (error) {
