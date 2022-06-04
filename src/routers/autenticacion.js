@@ -290,11 +290,13 @@ rutaAutenticacion.get("/carrito", (req, res) => {
   // };
   // getCartProducts();
   // let productosCargados;
-  carritos.getProductsById(userMail).then((resp) => (productosCart = resp))
-
+  const getCartAndRender = async () => {
+    carritos.getProductsById(userMail).then((resp) => (productosCart = resp))
+    let cartProducts = productosCart[0]
+    res.render("pages/carrito", {usuario, cartProducts})
+  }
+  getCartAndRender()
   // setTimeout(function(){
-  let cartProducts = productosCart[0]
-  res.render("pages/carrito", {usuario, cartProducts})
     // },500)
 });
 
