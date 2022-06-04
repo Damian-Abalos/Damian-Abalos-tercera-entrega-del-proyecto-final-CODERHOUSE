@@ -1,4 +1,4 @@
-const express = require("express");
+/*------------- [requires]-------------*/
 const passport = require("passport");
 const { Router } = require("express");
 const { Strategy: LocalStrategy } = require("passport-local");
@@ -10,17 +10,34 @@ const { Schema } = require("mongoose");
 const URLDB = process.env.URLDB;
 const rutaAutenticacion = Router();
 
-const axios = require("axios");
 const twilio = require("twilio");
 const nodemailer = require("nodemailer");
 const logger = require("../loggers/logger");
+
+/*------------- [Import carritos y productos]-------------*/
+const carritos =
+  process.env.DB == "Firebase"
+    ? require("../daos/carritos/CarritosDaoFirebase")
+    : require("../daos/carritos/CarritosDaoMongoDB");
+
+let productosCargadosAlCarrito;
+const setCartProducts = (userMail) => {
+  carritos.getProductsById(userMail).then((resp) => (productosCargadosAlCarrito = resp))
+}  
+
+const productos =
+  process.env.DB == "Firebase"
+    ? require("../daos/productos/ProductosDaoFirebase")
+    : require("../daos/productos/ProductosDaoMongoDB");
+let productosCargados;
+productos.getAll().then((resp) => (productosCargados = resp));
 
 /*------------- [Mensajes]-------------*/
 const accountSid = process.env.ACCOUNTSID;
 const authToken = process.env.AUTHTOKEN;
 const adminMail = process.env.ADMIN_MAIL;
-
 const client = twilio(accountSid, authToken);
+
 const enviarSms = async (to) => {
   try {
     const message = await client.messages.create({
@@ -37,9 +54,6 @@ const enviarWhatsapp = async (usuarioNombre, usuarioTelefono) => {
   try {
     const message = await client.messages.create({
       body: `nuevo pedido de ${usuarioNombre}`,
-      mediaUrl: [
-        "https://pymstatic.com/98912/conversions/cursos-motivacion-default.jpg",
-      ],
       from: "whatsapp:+14155238886",
       to: `whatsapp:${usuarioTelefono}`,
     });
@@ -71,19 +85,7 @@ const enviarMail = async (usuarioNombre, productosComprados) => {
   } catch (error) {
     logger.info(error);
   }
-};
-/*------------- [Import carritos y productos]-------------*/
-const carritos =
-  process.env.DB == "Firebase"
-    ? require("../daos/carritos/CarritosDaoFirebase")
-    : require("../daos/carritos/CarritosDaoMongoDB");
-
-const productos =
-  process.env.DB == "Firebase"
-    ? require("../daos/productos/ProductosDaoFirebase")
-    : require("../daos/productos/ProductosDaoMongoDB");
-let productosCargados;
-productos.getAll().then((resp) => (productosCargados = resp));
+}
 
 /*------------- [Mongo Atlas para user]-------------*/
 const userSchema = new Schema({
@@ -253,6 +255,7 @@ rutaAutenticacion.get("/", (req, res) => {
     res.redirect("/login");
   }
 });
+
 //carrito
 rutaAutenticacion.get("/carrito", (req, res) => {
   let user = req.user;
@@ -270,18 +273,14 @@ rutaAutenticacion.get("/carrito", (req, res) => {
     userAdress,
     userPhone,
     userPhoto,
-  };
-  let cartProducts = [
-    {
-      nombre:"celular",
-      precio:"100",
-      foto:"asd"
-    }
-  ]
-  // const getProdructs = async () => {
-  //   productosCart = await carritos.getProductsById(userMail)
-  //   logger.info(productosCart)
-  // }
+  }
+  //esto es de prueba//
+  let cartProducts = []
+    // {
+    //   nombre:"celular",
+    //   precio:"100",
+    //   foto:"asd"
+    // }
   const renderizar = () => {
     res.render("pages/carrito", { usuario, cartProducts })
   }
@@ -299,14 +298,15 @@ rutaAutenticacion.post("/carrito", async (req, res) => {
     let emptyCart = { productos: [] };
     await carritos.updateById(emptyCart, usuarioMail);
   };
-
+  //esto es de prueba//
   let cartProducts = [{
     nombre:"celular",
     precio:"100",
     foto:"asd"
   }]
-  // let productosCart = await carritos.getProductsById(userMail)
-  // let cartProducts = productosCart[0]
+
+  setCartProducts()
+
   const finalizarCompra = async () => {
     let productosComprados = cartProducts.map(function (producto) {
       return `
@@ -322,7 +322,6 @@ rutaAutenticacion.post("/carrito", async (req, res) => {
     vaciarCarrito();
     res.redirect("/");
   };
-  // res.render("pages/carrito", { usuario, cartProducts });
   
   setTimeout(() => {
     finalizarCompra();
@@ -330,7 +329,6 @@ rutaAutenticacion.post("/carrito", async (req, res) => {
 });
 
 //info
-
 rutaAutenticacion.get("/infoUser", (req, res) => {
   let user = req.user;
   let userMail = user.username;
@@ -374,6 +372,7 @@ rutaAutenticacion.get("/login-error", (req, res) => {
   logger.info("error en login");
   res.render("pages/login-error", {});
 });
+
 // signup
 rutaAutenticacion.get("/signup", (req, res) => {
   res.render("pages/signup");
@@ -389,6 +388,7 @@ rutaAutenticacion.get("/signup-error", (req, res) => {
   logger.info("error en signup");
   res.render("pages/signup-error", {});
 });
+
 // Logout
 rutaAutenticacion.get("/logout", function (req, res, next) {
   req.logout(function (err) {
@@ -398,6 +398,7 @@ rutaAutenticacion.get("/logout", function (req, res, next) {
     res.redirect("/");
   });
 });
+
 // Fail route
 rutaAutenticacion.get("*", (req, res) => {
   res.status(404).render("pages/routing-error", {});
