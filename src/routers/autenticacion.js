@@ -316,13 +316,13 @@ rutaAutenticacion.post("/carrito", async (req, res) => {
           <li><img style="max-width: 50px;" src="${producto.foto}" alt=""></li>             
       </ul>`;
     });
-    enviarSms("+541133710828");
-    enviarWhatsapp(usuarioNombre, "+5491133710828");
+    enviarSms(`+54${usuarioTelefono}`);
+    enviarWhatsapp(usuarioNombre, `+549${usuarioTelefono}`);
     enviarMail(usuarioNombre, productosComprados);
     vaciarCarrito();
     res.redirect("/");
   };
-  res.render("pages/carrito", { usuario, cartProducts });
+  // res.render("pages/carrito", { usuario, cartProducts });
   
   setTimeout(() => {
     finalizarCompra();
