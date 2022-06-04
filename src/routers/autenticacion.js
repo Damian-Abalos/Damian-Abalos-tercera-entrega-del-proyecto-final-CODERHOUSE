@@ -285,11 +285,7 @@ rutaAutenticacion.get("/carrito", (req, res) => {
   const renderizar = () => {
     res.render("pages/carrito", { usuario, productosCart })
   }
-  const cargarYrenderizar = () =>{
-    getProdructs()
-    renderizar()
-  }
-  cargarYrenderizar()
+  renderizar()
 
 });
 
