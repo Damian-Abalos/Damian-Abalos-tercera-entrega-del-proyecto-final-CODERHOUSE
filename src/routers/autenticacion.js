@@ -291,7 +291,7 @@ rutaAutenticacion.get("/carrito", (req, res) => {
   setTimeout(function(){
     let cartProducts = productosCart[0]
       res.render("pages/carrito", {usuario, cartProducts})
-    },1500)
+    },500)
 });
 
 rutaAutenticacion.post("/carrito", async (req,res)=>{
