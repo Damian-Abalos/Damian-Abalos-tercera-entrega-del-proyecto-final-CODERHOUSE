@@ -276,9 +276,8 @@ rutaAutenticacion.get("/carrito", (req, res) => {
     userPhone,
     userPhoto,
   };
-  let productosCart;
   // const getCartProducts = async () => {
-  //   try {
+    //   try {
   //     let pedirCarrito = await axios.get(
   //       // `http://localhost:8080/api/carrito/${userMail}/productos`
   //       `https://tercera-entrega-coder.herokuapp.com/${userMail}/productos`
@@ -291,13 +290,12 @@ rutaAutenticacion.get("/carrito", (req, res) => {
   // getCartProducts();
   // let productosCargados;
   const getCartAndRender = async () => {
+    let productosCart = [];
     carritos.getProductsById(userMail).then((resp) => (productosCart = resp))
     let cartProducts = productosCart[0]
     res.render("pages/carrito", {usuario, cartProducts})
   }
   getCartAndRender()
-  // setTimeout(function(){
-    // },500)
 });
 
 rutaAutenticacion.post("/carrito", async (req,res)=>{
