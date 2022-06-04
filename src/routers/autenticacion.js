@@ -290,9 +290,7 @@ rutaAutenticacion.get("/carrito", (req, res) => {
   // getCartProducts();
   // let productosCargados;
   const getCartAndRender = async () => {
-    let productosCart = [];
-    carritos.getProductsById(userMail).then((resp) => (productosCart = resp))
-    let cartProducts = productosCart[0]
+    let productosCart = await carritos.getProductsById(userMail).then((resp) => (productosCart = resp[0]))
     res.render("pages/carrito", {usuario, cartProducts})
   }
   getCartAndRender()
