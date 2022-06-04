@@ -274,6 +274,7 @@ rutaAutenticacion.get("/carrito", (req, res) => {
   let productosCart
   const getProdructs = async () => {
     productosCart = await carritos.getProductsById(userMail)
+    logger.info(productosCart)
   }
   const renderizar = () => {
     res.render("pages/carrito", { usuario, productosCart })
