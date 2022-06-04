@@ -47,31 +47,31 @@ const enviarWhatsapp = async (usuarioNombre, usuarioTelefono) => {
   } catch (error) {
     logger.info(error);
   }
-}; 
-const enviarMail = async (usuarioNombre, productosComprados) => {  
+};
+const enviarMail = async (usuarioNombre, productosComprados) => {
   const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      port: 587,
-      auth: {
-          user: adminMail,
-          pass: 'ofznioubsfoytlta'
-      }
+    service: "gmail",
+    port: 587,
+    auth: {
+      user: adminMail,
+      pass: "ofznioubsfoytlta",
+    },
   });
-  
+
   const mailOptions = {
-      from: 'Tercera entrega backend',
-      to: adminMail,
-      subject: `Nuevo pedido de ${usuarioNombre}`,
-      html: `<div>${productosComprados}</div>`
-  }
-  
+    from: "Tercera entrega backend",
+    to: adminMail,
+    subject: `Nuevo pedido de ${usuarioNombre}`,
+    html: `<div>${productosComprados}</div>`,
+  };
+
   try {
-      const info = await transporter.sendMail(mailOptions)
-      logger.info(info)
+    const info = await transporter.sendMail(mailOptions);
+    logger.info(info);
   } catch (error) {
-      logger.info(error)
+    logger.info(error);
   }
-} 
+};
 /*------------- [Import carritos y productos]-------------*/
 const carritos =
   process.env.DB == "Firebase"
@@ -176,9 +176,8 @@ passport.use(
             return done(err);
           }
           logger.info(user);
-          logger.info("User Registration succesful")
+          logger.info("User Registration succesful");
 
-          
           const asunto = "nuevo registro";
           const mensajeHtml = `
                 <div>
@@ -271,50 +270,30 @@ rutaAutenticacion.get("/carrito", (req, res) => {
     userAdress,
     userPhone,
     userPhoto,
-  }
+  };
 
   const getCartAndRender = async () => {
-    let productosCart = await carritos.getProductsById(userMail)
-    let cartProducts = productosCart[0]
-    res.render("pages/carrito", {usuario, cartProducts})
-  }
-  getCartAndRender()
+    let productosCart = await carritos.getProductsById(userMail);
+    let cartProducts = productosCart[0];
+    res.render("pages/carrito", { usuario, cartProducts });
+  };
+  getCartAndRender();
 });
 
-
-rutaAutenticacion.post("/carrito", async (req,res)=>{
+rutaAutenticacion.post("/carrito", async (req, res) => {
   let user = req.user;
-  let usuarioTelefono = user.telefono
-  let usuarioNombre = user.nombre
+  let usuarioTelefono = user.telefono;
+  let usuarioNombre = user.nombre;
   let usuarioMail = user.username;
 
-
-
   const vaciarCarrito = async () => {
-    let emptyCart = {"productos":[]}
-    await carritos.updateById(emptyCart, usuarioMail)
-  }
+    let emptyCart = { productos: [] };
+    await carritos.updateById(emptyCart, usuarioMail);
+  };
 
-  // let productosCart
-  // const getCartProducts = async () => {
-  //   try {
-  //     let pedirCarrito = await axios.get(
-  //       // `http://localhost:8080/api/carrito/${usuarioMail}/productos`
-  //       `https://tercera-entrega-coder.herokuapp.com//api/carrito/${usuarioMail}/productos`
-  //     );
-  //     productosCart = pedirCarrito.data      
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
-  // getCartProducts();
-  const getCartAndRender = async () => {
-    let productosCart = await carritos.getProductsById(userMail).then((resp) => (productosCart = resp[0]))
-    res.render("pages/carrito", {usuario, cartProducts})
-  }
-
+  let productosCart = await carritos.getProductsById(userMail)
+  let cartProducts = productosCart[0]
   const finalizarCompra = async () => {
-    let cartProducts = productosCart
     let productosComprados = cartProducts.map(function (producto) {
       return `
       <ul>
@@ -322,20 +301,19 @@ rutaAutenticacion.post("/carrito", async (req,res)=>{
           <li>$${producto.precio}</li>             
           <li><img style="max-width: 50px;" src="${producto.foto}" alt=""></li>             
       </ul>`;
-  });
-    // logger.info(productosCart)
-    // let productos = JSON.stringify(cartProducts)
-    enviarSms('+541133710828')
-    enviarWhatsapp(usuarioNombre,'+5491133710828')
-    enviarMail(usuarioNombre, productosComprados)
-    vaciarCarrito()
-    res.redirect("/")
-  }
+    });
+    enviarSms("+541133710828");
+    enviarWhatsapp(usuarioNombre, "+5491133710828");
+    enviarMail(usuarioNombre, productosComprados);
+    vaciarCarrito();
+    res.redirect("/");
+  };
+  res.render("pages/carrito", { usuario, cartProducts });
   
   setTimeout(() => {
-    finalizarCompra()
+    finalizarCompra();
   }, 1500);
-})
+});
 
 //info
 
@@ -347,7 +325,7 @@ rutaAutenticacion.get("/infoUser", (req, res) => {
   let userAdress = user.direccion;
   let userPhone = user.telefono;
   let userPhoto = user.foto;
-  
+
   let usuario = {
     userMail,
     userName,
@@ -357,10 +335,8 @@ rutaAutenticacion.get("/infoUser", (req, res) => {
     userPhoto,
   };
 
-  res.render("pages/infoUser", {usuario}) 
-
-})
-
+  res.render("pages/infoUser", { usuario });
+});
 
 // Login
 rutaAutenticacion.get("/login", (req, res) => {
