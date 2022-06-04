@@ -32,7 +32,7 @@
       const añadirAlCarrito = async (id_prod) => {
         await axios({
           method: "POST",
-          url: `http://localhost:8080/api/carrito/${idUser}/productos`,
+          url: `https://tercera-entrega-coder.herokuapp.com/api/carrito/${idUser}/productos`,
           data: {
             id_prod: id_prod,
           },
