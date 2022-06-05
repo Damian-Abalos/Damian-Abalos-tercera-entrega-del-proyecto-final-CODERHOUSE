@@ -274,17 +274,23 @@ rutaAutenticacion.get("/carrito", (req, res) => {
     userPhone,
     userPhoto,
   }
+
+  
   //esto es de prueba//
-  let cartProducts = []
-    // {
+  // {
     //   nombre:"celular",
     //   precio:"100",
     //   foto:"asd"
     // }
+  setCartProducts(userMail)
+    
   const renderizar = () => {
+    let cartProducts = productosCargadosAlCarrito[0]
     res.render("pages/carrito", { usuario, cartProducts })
   }
-  renderizar()
+  setTimeout(() => {
+    renderizar()
+  }, 1500);
 
 });
 
