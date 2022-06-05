@@ -22,20 +22,11 @@ const app = express();
 const httpServer = new HttpServer(app);
 
 // número de CPUs
-const options = {
-    alias:{
-        p: 'port',
-        m: 'modo'
-    },
-    default: {
-		port: '8080',
-		modo: 'FORK'
-	}
-}
-const args = minimist(process.argv.slice(2), options)
+
 // const PORT = parseInt(args.port) || 8080
-const PORT = process.env.PORT
-const modo = (args.modo).toUpperCase()
+const PORT = process.env.PORT || 8080
+const MODO = process.env.MODO || 'FORK'
+// const modo = (args.modo).toUpperCase()
 const numCPUs = require('os').cpus().length
 
 app.use(express.json());
@@ -74,7 +65,7 @@ app.use("/api/carrito", rutaCarrito)
 app.use("/", rutaAutenticacion)
 
 //server
-if (modo === 'CLUSTER') {
+if (MODO === 'CLUSTER') {
 	//modo CLUSTER
 	if (cluster.isMaster) {
 		logger.info(`Número de CPU: ${numCPUs}`)
@@ -90,14 +81,14 @@ if (modo === 'CLUSTER') {
 		})
 	} else {
 		const connectedServer = httpServer.listen(PORT, function () {
-			logger.info(`Servidor escuchando en el puerto ${connectedServer.address().port}, modo: ${modo} - PID: ${process.pid}`)
+			logger.info(`Servidor escuchando en el puerto ${connectedServer.address().port}, modo: ${MODO} - PID: ${process.pid}`)
 		})
 		connectedServer.on('error', error => logger.error(`Error en servidor: ${error}`))
 	}
 } else {
 	//modo FORK por defecto
 	const connectedServer = httpServer.listen(PORT, function () {
-		logger.info(`Servidor escuchando en el puerto ${connectedServer.address().port}, modo: ${modo} - PID: ${process.pid}`)
+		logger.info(`Servidor escuchando en el puerto ${connectedServer.address().port}, modo: ${MODO} - PID: ${process.pid}`)
 	})
 	connectedServer.on('error', error => logger.error(`Error en servidor: ${error}`))
 	process.on('exit', (code) => {

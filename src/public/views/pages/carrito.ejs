@@ -29,17 +29,16 @@
       <div class="d-flex justify-content-center">
         <a href="/" class="btn btn-success m-2">Seguir comprando</a>
         <form action="/carrito" method="post">
-          <button
-          id="myBtn"
-          type="submit"
-          class="btn btn-primary m-2"
-          >
-          Finalizar compra
-        </button>
-      </form>
+          <button id="myBtn" type="submit" class="btn btn-primary m-2">
+            Finalizar compra
+          </button>
+        </form>
       </div>
       <% } else { %>
-      <h3 class="alert alert-danger text-center">No hay productos</h3>
+      <div>
+        <h3 class="alert alert-danger text-center">No hay productos</h3>
+        <a href="/" class="btn btn-success m-2">Seguir comprando</a>
+      </div>
       <% } %>
     </div>
     <script src="/js/main.js"></script>

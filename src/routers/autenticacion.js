@@ -22,8 +22,10 @@ const carritos =
 
 let productosCargadosAlCarrito;
 const setCartProducts = (userMail) => {
-  carritos.getProductsById(userMail).then((resp) => (productosCargadosAlCarrito = resp))
-}  
+  carritos
+    .getProductsById(userMail)
+    .then((resp) => (productosCargadosAlCarrito = resp));
+};
 
 const productos =
   process.env.DB == "Firebase"
@@ -85,7 +87,7 @@ const enviarMail = async (usuarioNombre, productosComprados) => {
   } catch (error) {
     logger.info(error);
   }
-}
+};
 
 /*------------- [Mongo Atlas para user]-------------*/
 const userSchema = new Schema({
@@ -135,7 +137,6 @@ function isValidPassword(user, password) {
   return bCrypt.compareSync(password, user.password);
 }
 /*------------- [LocalStrategy - Signup]-------------*/
-
 passport.use(
   "signup",
   new LocalStrategy(
@@ -258,39 +259,35 @@ rutaAutenticacion.get("/", (req, res) => {
 
 //carrito
 rutaAutenticacion.get("/carrito", (req, res) => {
-  let user = req.user;
-  let userMail = user.username;
-  let userName = user.nombre;
-  let userAge = user.edad;
-  let userAdress = user.direccion;
-  let userPhone = user.telefono;
-  let userPhoto = user.foto;
+  if (req.isAuthenticated()) {
+    let user = req.user;
+    let userMail = user.username;
+    let userName = user.nombre;
+    let userAge = user.edad;
+    let userAdress = user.direccion;
+    let userPhone = user.telefono;
+    let userPhoto = user.foto;
 
-  let usuario = {
-    userMail,
-    userName,
-    userAge,
-    userAdress,
-    userPhone,
-    userPhoto,
+    let usuario = {
+      userMail,
+      userName,
+      userAge,
+      userAdress,
+      userPhone,
+      userPhoto,
+    };
+
+    setCartProducts(userMail);
+
+    const renderizar = () => {
+      res.render("pages/carrito", { usuario, productosCargadosAlCarrito });
+    };
+    setTimeout(() => {
+      renderizar();
+    }, 1500);
+  } else {
+    res.redirect("/login");
   }
-
-  
-  //esto es de prueba//
-  // {
-    //   nombre:"celular",
-    //   precio:"100",
-    //   foto:"asd"
-    // }
-  setCartProducts(userMail)
-    
-  const renderizar = () => {
-    res.render("pages/carrito", { usuario, productosCargadosAlCarrito})
-  }
-  setTimeout(() => {
-    renderizar()
-  }, 1500);
-
 });
 
 rutaAutenticacion.post("/carrito", async (req, res) => {
@@ -303,17 +300,13 @@ rutaAutenticacion.post("/carrito", async (req, res) => {
     let emptyCart = { productos: [] };
     await carritos.updateById(emptyCart, usuarioMail);
   };
-  //esto es de prueba//
-  // let cartProducts = [{
-  //   nombre:"celular",
-  //   precio:"100",
-  //   foto:"asd"
-  // }]
 
-  setCartProducts(usuarioMail)
+  setCartProducts(usuarioMail);
 
   const finalizarCompra = async () => {
-    let productosComprados = productosCargadosAlCarrito.map(function (producto) {
+    let productosComprados = productosCargadosAlCarrito.map(function (
+      producto
+    ) {
       return `
       <ul>
           <li>${producto.nombre}</li>             
@@ -327,7 +320,7 @@ rutaAutenticacion.post("/carrito", async (req, res) => {
     vaciarCarrito();
     res.redirect("/");
   };
-  
+
   setTimeout(() => {
     finalizarCompra();
   }, 1500);
@@ -335,6 +328,7 @@ rutaAutenticacion.post("/carrito", async (req, res) => {
 
 //info
 rutaAutenticacion.get("/infoUser", (req, res) => {
+  if (req.isAuthenticated()) {
   let user = req.user;
   let userMail = user.username;
   let userName = user.nombre;
@@ -353,6 +347,9 @@ rutaAutenticacion.get("/infoUser", (req, res) => {
   };
 
   res.render("pages/infoUser", { usuario });
+} else {
+  res.redirect("/login");
+}
 });
 
 // Login
