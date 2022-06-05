@@ -285,10 +285,7 @@ rutaAutenticacion.get("/carrito", (req, res) => {
   setCartProducts(userMail)
     
   const renderizar = () => {
-    let cartProducts = productosCargadosAlCarrito[0]
-    console.log(productosCargadosAlCarrito)
-    let productosCargadosAlCarritoString = productosCargadosAlCarrito.toLocaleString()
-    res.render("pages/carrito", { usuario, cartProducts, productosCargadosAlCarrito, productosCargadosAlCarritoString })
+    res.render("pages/carrito", { usuario, productosCargadosAlCarrito})
   }
   setTimeout(() => {
     renderizar()
