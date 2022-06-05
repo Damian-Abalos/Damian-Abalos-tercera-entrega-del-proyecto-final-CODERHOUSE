@@ -311,7 +311,7 @@ rutaAutenticacion.post("/carrito", async (req, res) => {
   //   foto:"asd"
   // }]
 
-  setCartProducts()
+  setCartProducts(usuarioMail)
 
   const finalizarCompra = async () => {
     let productosComprados = productosCargadosAlCarrito.map(function (producto) {
