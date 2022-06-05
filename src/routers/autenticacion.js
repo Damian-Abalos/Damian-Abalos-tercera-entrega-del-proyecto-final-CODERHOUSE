@@ -305,16 +305,16 @@ rutaAutenticacion.post("/carrito", async (req, res) => {
     await carritos.updateById(emptyCart, usuarioMail);
   };
   //esto es de prueba//
-  let cartProducts = [{
-    nombre:"celular",
-    precio:"100",
-    foto:"asd"
-  }]
+  // let cartProducts = [{
+  //   nombre:"celular",
+  //   precio:"100",
+  //   foto:"asd"
+  // }]
 
   setCartProducts()
 
   const finalizarCompra = async () => {
-    let productosComprados = cartProducts.map(function (producto) {
+    let productosComprados = productosCargadosAlCarrito.map(function (producto) {
       return `
       <ul>
           <li>${producto.nombre}</li>             
